@@ -1,0 +1,35 @@
+
+name: Daily opportunity feed
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 2 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repository files
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Update opportunity feed
+        run: |
+          python -c "from pathlib import Path; p=Path('update_feed.py'); s=p.read_text(); p.write_text(s.replace('Path(__file__).resolve().parents[1]', 'Path(__file__).resolve().parent'))"
+          python update_feed.py
+
+      - name: Save refreshed data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json update_feed.py
+          git diff --cached --quiet || git commit -m "Daily opportunity feed refresh"
+          git push
