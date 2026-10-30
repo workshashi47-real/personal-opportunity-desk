@@ -10,7 +10,7 @@ from urllib.request import Request, urlopen
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parent
 OUT = ROOT / 'data.json'
 QUERIES = [
  ('Government Jobs', '(graduate recruitment OR graduate vacancy OR government jobs) India official notification'),
